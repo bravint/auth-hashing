@@ -37,7 +37,7 @@ router.post('/login', async (req, res) => {
         },
     });
 
-    if (!findUserbyUsermame) res.status(404).send(`no user found with username ${username}`);
+    if (!findUserbyUsermame) res.status(401).send(`No user found with username ${username}`);
 
     if (await bcrypt.compare(password, findUserbyUsermame.password)) {
         return res.json(jwt.sign(username, secret));
