@@ -21,11 +21,15 @@ router.post('/register', async (req, res) => {
 
     const user = { username, password };
 
-    const createdUser = await prisma.user.create({
+    let createdUser = await prisma.user.create({
         data: user,
     });
 
-    res.json(createdUser);
+    delete createdUser.password;
+
+    console.log('Created User', createdUser)
+
+    res.status(201).json(createdUser);
 });
 
 router.post('/login', async (req, res) => {
@@ -37,13 +41,13 @@ router.post('/login', async (req, res) => {
         },
     });
 
-    if (!findUserbyUsermame) res.status(401).send(`No user found with username ${username}`);
+    if (!findUserbyUsermame) res.status(401).json(`No user found with username ${username}`);
 
     if (await bcrypt.compare(password, findUserbyUsermame.password)) {
-        return res.json(jwt.sign(username, secret));
+        return res.status(200).json(jwt.sign(username, secret));
     }
 
-    res.status(401).json('incorrect credentials provided');
+    res.status(401).json('Incorrect credentials provided');
 });
 
 module.exports = router;
